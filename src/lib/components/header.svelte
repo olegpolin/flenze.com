@@ -39,15 +39,10 @@
         <a
           {href}
           aria-current={active ? 'page' : undefined}
-          class={[
-            'flex items-center gap-2.5 px-5',
-            active ? ['font-semibold', accentBlock[accent]] : 'hover:text-link'
-          ]}
+          class={['flex items-center gap-2.5 px-5', active ? accentBlock[accent] : 'hover:text-link']}
         >
           <span>{title}</span>
-          {#if !active}
-            <span class={['size-3', accentBg[accent]]} aria-hidden="true"></span>
-          {/if}
+          <span class={['size-3', active ? 'bg-current' : accentBg[accent]]} aria-hidden="true"></span>
         </a>
       {/each}
     </nav>
