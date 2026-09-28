@@ -19,14 +19,12 @@
   </div>
 
   {#each presets as preset, i (preset.id)}
-    {@const first = i === 0}
     {@const last = i === presets.length - 1}
     <div
       class={[
         'grid grid-cols-1 gap-y-3 border-b py-4 md:h-21 md:items-center md:py-0',
         columns,
-        first && 'bg-card',
-        !first && !last && 'border-hairline'
+        !last && 'border-hairline'
       ]}
     >
       <a class="px-4 text-[21px] font-semibold tracking-[-0.01em] hover:text-link" href={presetHref(preset)}>
@@ -36,7 +34,7 @@
         {preset.pieces.map((id) => pieces[id].name).join(', ')}
       </span>
       <span class="flex px-4 md:justify-end">
-        <Button href={presetHref(preset)} variant={first ? 'default' : 'outline'}>View starter →</Button>
+        <Button href={presetHref(preset)} variant="outline">View starter →</Button>
       </span>
     </div>
   {/each}
