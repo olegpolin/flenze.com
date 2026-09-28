@@ -3,6 +3,7 @@
 	import favicon from '#lib/assets/favicon.svg';
 	import { ModeWatcher } from 'mode-watcher';
 	import { Toaster } from '#lib/components/ui/sonner/index.ts';
+	import Header from '#lib/components/header.svelte';
 
 	let { children } = $props();
 </script>
@@ -15,4 +16,10 @@
 
 <Toaster richColors />
 
-{@render children()}
+<div class="flex min-h-svh flex-col">
+	<Header />
+
+	<main class="flex-1">
+		{@render children()}
+	</main>
+</div>
