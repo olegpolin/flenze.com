@@ -97,7 +97,7 @@
       side="bottom"
       preventScroll
     >
-      <nav class="flex min-h-full flex-col px-4 py-2" aria-label="Main">
+      <nav class="flex min-h-full flex-col px-4 pt-2 pb-4" aria-label="Main">
         {#each site.nav as { title, href, accent } (href)}
           <a
             {href}
@@ -117,9 +117,8 @@
           GitHub
         </a>
         <div class="mt-auto flex justify-end pt-8">
-          <Button variant="outline" size="lg" onclick={toggleMode}>
+          <Button variant="outline" size="icon-lg" aria-label={themeLabel} onclick={toggleMode}>
             {@render themeIcon()}
-            {themeLabel}
           </Button>
         </div>
       </nav>
