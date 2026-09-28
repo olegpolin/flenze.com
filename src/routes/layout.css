@@ -76,6 +76,8 @@
 @theme inline {
   --font-sans: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'Azeret Mono Variable', ui-monospace, Menlo, monospace;
+  /* The design was drawn at 1440px; pages and the header stop growing there. */
+  --container-site: 90rem;
   --color-ground: var(--ground);
   --color-panel: var(--panel);
   --color-surface: var(--surface);
