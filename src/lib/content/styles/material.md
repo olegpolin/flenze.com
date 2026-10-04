@@ -4,7 +4,7 @@ Restyle this shadcn-svelte app to Material 3 Expressive: lavender tonal palette,
 
 ## 1. Theme
 
-Run `npm i @fontsource-variable/roboto`. In the global stylesheet (`tailwind.css` in `components.json`), replace the sans font's `@import` with `@import '@fontsource-variable/roboto';`, uninstall the old sans font package, and in `@theme inline` set `--font-sans: 'Roboto Variable', sans-serif;`. Keep any mono font.
+Run `npm i -D @fontsource-variable/roboto`. In the global stylesheet (`tailwind.css` in `components.json`), replace the sans font's `@import` with `@import '@fontsource-variable/roboto';`, uninstall the old sans font package, and in `@theme inline` set `--font-sans: 'Roboto Variable', sans-serif;`. Keep any mono font.
 
 Replace the `:root` and `.dark` blocks with these. `.dark` lists only what differs; the rest comes from `:root`.
 

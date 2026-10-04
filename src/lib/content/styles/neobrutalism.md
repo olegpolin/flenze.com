@@ -4,7 +4,7 @@ Restyle this shadcn-svelte app to neobrutalism: 2px ink borders, hard zero-blur 
 
 ## 1. Theme
 
-Run `npm i @fontsource-variable/dm-sans`. In the global stylesheet (`tailwind.css` in `components.json`), replace the sans font's `@import` with `@import '@fontsource-variable/dm-sans';`, uninstall the old sans font package, and in `@theme inline` set `--font-sans: 'DM Sans Variable', sans-serif;`. Keep any mono font.
+Run `npm i -D @fontsource-variable/dm-sans`. In the global stylesheet (`tailwind.css` in `components.json`), replace the sans font's `@import` with `@import '@fontsource-variable/dm-sans';`, uninstall the old sans font package, and in `@theme inline` set `--font-sans: 'DM Sans Variable', sans-serif;`. Keep any mono font.
 
 Set these variables and leave every other one as it is. A palette name such as `amber-400` means `var(--color-amber-400)`.
 
