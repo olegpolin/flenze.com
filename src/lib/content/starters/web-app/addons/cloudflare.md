@@ -1,5 +1,6 @@
-1. npm i -D @sveltejs/adapter-cloudflare wrangler, and replace
-   adapter-auto with adapter-cloudflare in the SvelteKit config.
+1. npm i -D @sveltejs/adapter-cloudflare wrangler, npm uninstall
+   @sveltejs/adapter-auto, and replace adapter-auto with
+   adapter-cloudflare in vite.config.ts.
 2. Add wrangler.jsonc with the name from package.json:
    ```jsonc
    {
