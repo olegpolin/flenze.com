@@ -21,7 +21,8 @@ export const addons: AddonMeta[] = [
     id: 'cloudflare',
     name: 'Cloudflare Workers',
     accent: 'yellow',
-    description: 'adapter-cloudflare and a config file, so the app deploys to Workers.',
+    description:
+      'adapter-cloudflare, a Wrangler config, and GitHub Actions that deploy on every push to main and give each pull request its own preview.',
     pieces: ['cloudflare-workers']
   }
 ];
