@@ -52,6 +52,7 @@
     <a
       class="flex items-center pl-3.5 text-[13px] text-muted-foreground hover:text-link max-md:hidden"
       href={site.github}
+      target="_blank"
       rel="noopener"
     >
       GitHub
@@ -108,7 +109,9 @@
           <a
             class="flex h-16 items-center justify-between border-b border-hairline text-lg"
             href={site.github}
+            target="_blank"
             rel="noopener"
+            onclick={() => (mobileMenuOpen = false)}
           >
             GitHub
           </a>
