@@ -1,0 +1,28 @@
+<!--
+  Source of static/social-preview.png (1200x630). The mark is the same three
+  bars as favicon.svg. The text uses the site's two fonts, so render it in a
+  browser that has them loaded, not with a tool that only knows system fonts.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f1f1ec"/>
+
+  <g transform="translate(74 64) scale(2)">
+    <rect x="3" y="4" width="30" height="7.5" rx="1" fill="#f2b90f"/>
+    <rect x="3" y="14.25" width="21" height="7.5" rx="1" fill="#c9301f"/>
+    <rect x="3" y="24.5" width="10.5" height="7.5" rx="1" fill="#2a5bd7"/>
+  </g>
+  <text x="164" y="120" font-family="'Instrument Sans Variable', 'Instrument Sans', sans-serif" font-size="56" font-weight="600" letter-spacing="-2.24" fill="#16181d">flenze</text>
+
+  <g font-family="'Instrument Sans Variable', 'Instrument Sans', sans-serif" font-size="98" font-weight="600" letter-spacing="-3.92" fill="#16181d">
+    <text x="80" y="318">The stack your agent</text>
+    <text x="80" y="420">should have picked.</text>
+  </g>
+
+  <text x="80" y="488" font-family="'Instrument Sans Variable', 'Instrument Sans', sans-serif" font-size="30" fill="#33363c">SvelteKit starters, add-ons and design styles for coding agents.</text>
+
+  <rect x="80" y="540" width="1040" height="1" fill="#16181d"/>
+  <text x="80" y="588" font-family="'Azeret Mono Variable', 'Azeret Mono', monospace" font-size="24" fill="#55585f">flenze.com</text>
+  <rect x="1024" y="564" width="28" height="28" fill="#f2b90f"/>
+  <rect x="1058" y="564" width="28" height="28" fill="#c9301f"/>
+  <rect x="1092" y="564" width="28" height="28" fill="#2a5bd7"/>
+</svg>
