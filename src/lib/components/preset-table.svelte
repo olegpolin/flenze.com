@@ -1,7 +1,11 @@
 <script lang="ts">
   import { Button } from '#lib/components/ui/button/index.ts';
-  import { pieces } from '#lib/content/pieces.ts';
-  import { presets, presetHref } from '#lib/content/presets.ts';
+
+  interface Props {
+    rows: { id: string; title: string; href: string; stack: string[] }[];
+  }
+
+  let { rows }: Props = $props();
 
   const columns = 'md:grid-cols-[320px_1fr_200px]';
 </script>
@@ -18,23 +22,14 @@
     <span></span>
   </div>
 
-  {#each presets as preset, i (preset.id)}
-    {@const last = i === presets.length - 1}
-    <div
-      class={[
-        'grid grid-cols-1 gap-y-3 border-b py-4 md:h-21 md:items-center md:py-0',
-        columns,
-        !last && 'border-hairline'
-      ]}
-    >
-      <a class="px-4 text-[21px] font-semibold tracking-[-0.01em] hover:text-link" href={presetHref(preset)}>
-        {preset.title}
+  {#each rows as row (row.id)}
+    <div class={['grid grid-cols-1 gap-y-3 border-b border-hairline py-4 last:border-border md:h-21 md:items-center md:py-0', columns]}>
+      <a class="px-4 text-[21px] font-semibold tracking-[-0.01em] hover:text-link" href={row.href}>
+        {row.title}
       </a>
-      <span class="px-4 font-mono text-[13px] leading-normal md:pr-6 md:pl-0">
-        {preset.pieces.map((id) => pieces[id].name).join(', ')}
-      </span>
+      <span class="px-4 font-mono text-[13px] leading-normal md:pr-6 md:pl-0">{row.stack.join(', ')}</span>
       <span class="flex px-4 md:justify-end">
-        <Button href={presetHref(preset)} variant="outline">View starter →</Button>
+        <Button href={row.href} variant="outline">View starter →</Button>
       </span>
     </div>
   {/each}

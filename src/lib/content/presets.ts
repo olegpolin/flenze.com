@@ -1,5 +1,4 @@
 import type { Accent } from '#lib/accent.ts';
-import type { PieceId } from './pieces.ts';
 
 /**
  * A preset is a starter with a fixed set of add-ons. The home page table and
@@ -7,21 +6,17 @@ import type { PieceId } from './pieces.ts';
  */
 export interface Preset {
   id: string;
-  /** Mono label on the card strip, e.g. "WEB APP + AUTH". */
+  /** Strip label on the /starters card, e.g. "Web app + auth". */
   label: string;
   accent: Accent;
   /** "A web app with auth" */
   title: string;
   /** One or two sentences for the /starters card. */
   blurb: string;
-  starter: 'web-app';
-  /** Add-on ids, in canonical order. */
+  starter: string;
+  /** Add-on ids. */
   add: string[];
-  /** The pieces the composed starter is made of. Derived from the starter and add-ons once those exist. */
-  pieces: PieceId[];
 }
-
-const base: PieceId[] = ['svelte', 'sveltekit', 'tailwind', 'shadcn-svelte'];
 
 export const presets: Preset[] = [
   {
@@ -32,34 +27,26 @@ export const presets: Preset[] = [
     blurb:
       'The base. A compiler instead of a runtime, components you own, and an AGENTS.md with the skills already installed. Every other starter is this plus an add-on.',
     starter: 'web-app',
-    add: [],
-    pieces: base
+    add: []
+  },
+  {
+    id: 'web-app-posts',
+    label: 'Web app + markdown posts',
+    accent: 'red',
+    title: 'A web app with markdown posts',
+    blurb:
+      'The base plus mdsvex, so posts and pages can be written in markdown with Svelte components inside.',
+    starter: 'web-app',
+    add: ['posts']
   },
   {
     id: 'web-app-auth',
     label: 'Web app + auth',
-    accent: 'red',
+    accent: 'blue',
     title: 'A web app with auth',
     blurb:
-      'The base plus Better Auth on Drizzle and Neon Postgres, with Resend for email OTP sign-in and one OAuth provider. Protected routes, session in locals.',
+      'The base plus Better Auth on Drizzle and Neon Postgres, with Google sign-in.',
     starter: 'web-app',
-    add: ['auth'],
-    pieces: [...base, 'better-auth', 'drizzle', 'neon', 'resend']
-  },
-  {
-    id: 'web-app-blog',
-    label: 'Web app + blog',
-    accent: 'blue',
-    title: 'A web app with a blog',
-    blurb:
-      'The base plus mdsvex for markdown posts with frontmatter, a post list and a post page, prerendered at build time.',
-    starter: 'web-app',
-    add: ['blog'],
-    pieces: [...base, 'mdsvex']
+    add: ['auth']
   }
 ];
-
-export function presetHref(preset: Preset) {
-  const path = `/starters/${preset.starter}`;
-  return preset.add.length ? `${path}?add=${preset.add.join(',')}` : path;
-}

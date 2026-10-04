@@ -6,8 +6,11 @@
   import StatsTable from '#lib/components/stats-table.svelte';
   import { Button } from '#lib/components/ui/button/index.ts';
   import { site } from '#lib/config/site.ts';
+  import type { PageProps } from './$types';
   import { benchmark, major } from '#lib/content/benchmark.ts';
   import { compare } from '#lib/content/compare.ts';
+
+  let { data }: PageProps = $props();
 </script>
 
 <Seo />
@@ -27,7 +30,7 @@
   </div>
 </header>
 
-<PresetTable />
+<PresetTable rows={data.rows} />
 
 <section class="flex flex-col gap-6 pt-22">
   <SectionHeading>The most training data is not the best choice.</SectionHeading>

@@ -1,6 +1,6 @@
-# flenze.com
+# <project name from step 1>
 
-The stack your agent should have picked.
+A SvelteKit web app
 
 ## Tech Stack
 
