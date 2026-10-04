@@ -21,6 +21,13 @@ Most of this tech stack had a recent major version, so your training data is lik
 - Every change goes on a feature branch with a PR. Never push directly to `main`.
 - If you push more commits after opening a PR, update its description to cover the full change set.
 
+## Deployment
+
+The site runs on Cloudflare Workers through adapter-cloudflare, configured in `wrangler.jsonc`. Three workflows in `.github/workflows/` do the deploying:
+
+- `deploy-production.yml` deploys to production on every push to `main`.
+- `deploy-preview.yml` gives every pull request its own Workers Preview named `pr-<number>`, shown on the pull request as a deployment.
+- `cleanup-preview.yml` deletes that Preview when the pull request closes.
 
 ## Content
 
