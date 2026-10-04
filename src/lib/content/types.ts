@@ -24,8 +24,6 @@ export interface AddonMeta {
   accent: Accent;
   description: string;
   pieces: PieceId[];
-  /** Add-on ids that must be selected with this one. */
-  requires?: string[];
 }
 
 export interface Addon extends AddonMeta {

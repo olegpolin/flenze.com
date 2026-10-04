@@ -47,42 +47,14 @@ export function readAdd(url: { searchParams: Pick<URLSearchParams, 'getAll'> }):
     .filter(Boolean);
 }
 
-/** The selection after ticking or unticking one add-on. Unticking also drops whatever required it. */
+/** The selection after ticking or unticking one add-on. */
 export function toggleAddon(starter: Starter, add: readonly string[], id: string): string[] {
-  if (!add.includes(id)) return canonicalAdd(starter, [...add, id]);
-  const dropped = new Set([id]);
-  let changed = true;
-  while (changed) {
-    changed = false;
-    for (const addon of starter.addons) {
-      if (dropped.has(addon.id) || !add.includes(addon.id)) continue;
-      if ((addon.requires ?? []).some((dep) => dropped.has(dep))) {
-        dropped.add(addon.id);
-        changed = true;
-      }
-    }
-  }
-  return canonicalAdd(
-    starter,
-    add.filter((a) => !dropped.has(a))
-  );
+  return canonicalAdd(starter, add.includes(id) ? add.filter((a) => a !== id) : [...add, id]);
 }
 
-/**
- * Dedupes, pulls in required add-ons, and orders by the starter's definition
- * order. Unknown ids are dropped.
- */
+/** Dedupes and orders by the starter's definition order. Unknown ids are dropped. */
 export function canonicalAdd(starter: Starter, ids: readonly string[]): string[] {
-  const byId = new Map(starter.addons.map((a) => [a.id, a]));
-  const wanted = new Set<string>();
-  const include = (id: string) => {
-    const addon = byId.get(id);
-    if (!addon || wanted.has(id)) return;
-    wanted.add(id);
-    for (const dep of addon.requires ?? []) include(dep);
-  };
-  ids.forEach(include);
-  return starter.addons.filter((a) => wanted.has(a.id)).map((a) => a.id);
+  return starter.addons.filter((a) => ids.includes(a.id)).map((a) => a.id);
 }
 
 /** Renumbers `N. ` steps from `start` and re-indents their continuation lines. */
@@ -179,7 +151,6 @@ export function composeAddon(starter: Starter, addon: Addon): string {
  * then every add-on as an optional part.
  */
 export function composeReference(starter: Starter): string {
-  const names = new Map(starter.addons.map((a) => [a.id, a.name]));
   const parts = [
     `# ${starter.title}`,
     'Do Part 1. Then apply only the add-ons from Part 2 that the user named, in the order they are listed here. If the user named none, stop after Part 1 and tell them which add-ons exist.',
@@ -190,12 +161,9 @@ export function composeReference(starter: Starter): string {
 
   if (starter.addons.length) parts.push('## Part 2: Optional add-ons');
   for (const addon of starter.addons) {
-    const requires = addon.requires?.length
-      ? ` Requires: ${addon.requires.map((id) => names.get(id)).join(', ')}.`
-      : '';
     parts.push(
       `### Add-on: ${addon.name}`,
-      `Only if the user asked for ${addon.name}.${requires} ${addon.description}`,
+      `Only if the user asked for ${addon.name}. ${addon.description}`,
       renumber(addon.steps, 1).text
     );
   }
