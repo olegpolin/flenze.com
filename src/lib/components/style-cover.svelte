@@ -1,13 +1,10 @@
 <!--
   The same small "Inbox" screen drawn in each design style, as a preview.
-  It depicts another design system, so it uses that system's own fonts and
-  colours instead of this site's tokens. The colours are each registry's
-  theme, light and dark, and follow the site's mode.
+  It depicts another design system, so its colours are that registry's own
+  theme (light and dark, following the site's mode) rather than this site's
+  tokens. The type is the site's font: a preview is a sketch, not a specimen.
 -->
 <script lang="ts">
-  import '@fontsource-variable/dm-sans';
-  import '@fontsource-variable/roboto';
-  import '@fontsource-variable/space-grotesk';
   import CheckIcon from '@lucide/svelte/icons/check';
   import type { StyleId } from '#lib/content/styles.ts';
 
@@ -162,7 +159,6 @@
 -->
 <style>
   .cover[data-style='neobrutalism'] {
-    font-family: 'DM Sans Variable', sans-serif;
     --c-bg: oklch(0.95 0.02 85);
     --c-fg: oklch(0.145 0 0);
     --c-dim: oklch(0.439 0 0);
@@ -187,7 +183,6 @@
   }
 
   .cover[data-style='material'] {
-    font-family: 'Roboto Variable', sans-serif;
     --c-bg: oklch(0.9838 0.0128 321.89);
     --c-fg: oklch(0.2265 0.01 303.71);
     --c-dim: oklch(0.4843 0.0147 301.01);
@@ -212,7 +207,6 @@
   }
 
   .cover[data-style='neoplasticism'] {
-    font-family: 'Space Grotesk Variable', sans-serif;
     --c-bg: oklch(1 0 0);
     --c-fg: oklch(0 0 0);
     --c-dim: oklch(0.371 0 0);
