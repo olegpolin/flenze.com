@@ -22,11 +22,13 @@
 
   /** Size of the loaded image in its own pixels; null until one is loaded. */
   let size = $state.raw<{ width: number; height: number } | null>(null);
-  /** The image pixel under the pointer or the keyboard cursor. */
-  let cursor = $state.raw<{ x: number; y: number; rgb: Rgb } | null>(null);
+  /** The image pixel under the pointer or the keyboard cursor; `touch` when a finger put it there. */
+  let cursor = $state.raw<{ x: number; y: number; rgb: Rgb; touch: boolean } | null>(null);
   let picked = $state.raw<Rgb | null>(null);
   let history = $state.raw<Rgb[]>([]);
   let dragging = $state(false);
+  /** Id of the pointer pressed on the canvas, so only its lift picks. */
+  let pressed: number | null = null;
 
   const formats = $derived(
     picked
@@ -41,7 +43,8 @@
 
   /**
    * Where the cursor mark goes, as a percentage of the canvas, and which way the loupe
-   * hangs off it: towards the middle of the image, so it never leaves it.
+   * hangs off it: towards the middle of the image, so it never leaves it. Under a finger it
+   * hangs further out, so the fingertip does not cover it.
    */
   const mark = $derived(
     cursor && size
@@ -49,7 +52,8 @@
           left: ((cursor.x + 0.5) / size.width) * 100,
           top: ((cursor.y + 0.5) / size.height) * 100,
           flipX: cursor.x > size.width / 2,
-          flipY: cursor.y > size.height / 2
+          flipY: cursor.y > size.height / 2,
+          touch: cursor.touch
         }
       : null
   );
@@ -94,7 +98,7 @@
   }
 
   /** Moves the cursor to an image pixel and redraws the loupe around it. */
-  function look(x: number, y: number) {
+  function look(x: number, y: number, touch = false) {
     // Not finite when the canvas has no size on the page, as in a hidden tab.
     if (!size || !Number.isFinite(x + y)) return;
     x = Math.min(size.width - 1, Math.max(0, x));
@@ -105,7 +109,7 @@
     lens.imageSmoothingEnabled = false;
     lens.clearRect(0, 0, LOUPE_SIZE, LOUPE_SIZE);
     lens.drawImage(canvas, x - half, y - half, LOUPE_PIXELS, LOUPE_PIXELS, 0, 0, LOUPE_SIZE, LOUPE_SIZE);
-    cursor = { x, y, rgb: [r, g, b] };
+    cursor = { x, y, rgb: [r, g, b], touch };
   }
 
   function point(event: PointerEvent) {
@@ -113,8 +117,38 @@
     const rect = canvas.getBoundingClientRect();
     look(
       Math.floor(((event.clientX - rect.left) / rect.width) * size.width),
-      Math.floor(((event.clientY - rect.top) / rect.height) * size.height)
+      Math.floor(((event.clientY - rect.top) / rect.height) * size.height),
+      event.pointerType === 'touch'
     );
+  }
+
+  /**
+   * Picking happens on the lift of the pointer that pressed, not on click: a tap fires
+   * pointerleave before click, which would have cleared the cursor first. Capturing the pointer
+   * keeps a drag aiming past the canvas edge and brings the lift back here.
+   */
+  function press(event: PointerEvent) {
+    if (!size) return;
+    pressed = event.pointerId;
+    point(event);
+    canvas.setPointerCapture(event.pointerId);
+  }
+
+  function release(event: PointerEvent) {
+    if (event.pointerId !== pressed) return;
+    pressed = null;
+    point(event);
+    pick();
+  }
+
+  /** A mouse leaving takes the mark with it; a lifted finger leaves it on the picked pixel. */
+  function leave(event: PointerEvent) {
+    if (event.pointerType === 'mouse') cursor = null;
+  }
+
+  function cancel(event: PointerEvent) {
+    if (event.pointerId === pressed) pressed = null;
+    leave(event);
   }
 
   function pick() {
@@ -213,13 +247,14 @@
       <div class="relative w-fit max-w-full">
         <canvas
           bind:this={canvas}
-          class="block max-h-[75vh] max-w-full cursor-crosshair outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          class="block max-h-[75vh] max-w-full cursor-crosshair touch-none outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           tabindex="0"
           aria-label="Loaded image. Arrow keys move the cursor, Enter picks the color under it."
-          onpointerdown={point}
+          onpointerdown={press}
           onpointermove={point}
-          onpointerleave={() => (cursor = null)}
-          onclick={pick}
+          onpointerup={release}
+          onpointerleave={leave}
+          onpointercancel={cancel}
           onkeydown={key}
         ></canvas>
 
@@ -232,8 +267,9 @@
           <div
             class={[
               'absolute border bg-card',
-              mark?.flipX ? 'right-4' : 'left-4',
-              mark?.flipY ? 'bottom-4' : 'top-4'
+              mark?.touch
+                ? [mark.flipX ? 'right-12' : 'left-12', mark.flipY ? 'bottom-12' : 'top-12']
+                : [mark?.flipX ? 'right-4' : 'left-4', mark?.flipY ? 'bottom-4' : 'top-4']
             ]}
           >
             <div class="relative">
@@ -245,7 +281,8 @@
         </div>
       </div>
       <p class="font-mono text-xs text-muted-foreground">
-        Click a pixel to pick it. Arrow keys move one pixel, Shift moves ten, Enter picks.
+        Click a pixel to pick it. On touch, drag to aim and lift to pick. Arrow keys move one pixel, Shift
+        moves ten, Enter picks.
       </p>
     </div>
   </section>
