@@ -114,9 +114,18 @@
              accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
              command: preview delete --name pr-${{ github.event.number }} --skip-confirmation
    ```
-4. Update AGENTS.md for what you just added, in an existing section or
+4. If the app has a database, update the workflows for the
+   database: every pull request preview gets its own Neon branch from
+   Neon's create-branch action, migrations run against it before the
+   preview deploys and against production before each production
+   deploy, the preview's DATABASE_URL and ORIGIN are set as its own
+   secrets right after it deploys, the pull request fails if the schema
+   changed without a committed migration, and the cleanup workflow
+   deletes the branch. Builds get placeholder values for the env vars;
+   real values live on the Workers.
+5. Update AGENTS.md for what you just added, in an existing section or
    a new one, and add it to the Tech Stack section of README.md.
-5. Only when every step above is finished and committed, prompt the
+6. Only when every step above is finished and committed, prompt the
    user to add two repository secrets on GitHub: CLOUDFLARE_ACCOUNT_ID,
    and CLOUDFLARE_API_TOKEN from an Account API token made with the
-   "Edit Cloudflare Workers" template.
+   "Edit Cloudflare Workers" template, plus any the database steps need.
