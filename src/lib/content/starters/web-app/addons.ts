@@ -1,6 +1,6 @@
 import type { AddonMeta } from '../../types.ts';
 
-/** In the order they appear in the checklist and in a composed prompt. */
+/** In the order they appear in the checklist and in a composed prompt. Cloudflare comes before Auth so Auth's steps that need the user come last. */
 export const addons: AddonMeta[] = [
   {
     id: 'posts',
@@ -10,19 +10,19 @@ export const addons: AddonMeta[] = [
     pieces: ['mdsvex']
   },
   {
-    id: 'auth',
-    name: 'Auth',
-    accent: 'blue',
-    description:
-      'Better Auth with Drizzle and a Neon Postgres database, signing in with Google.',
-    pieces: ['better-auth', 'drizzle', 'neon']
-  },
-  {
     id: 'cloudflare',
     name: 'Cloudflare Workers',
     accent: 'yellow',
     description:
       'adapter-cloudflare, a Wrangler config, and GitHub Actions that deploy on every push to main and give each pull request its own preview.',
     pieces: ['cloudflare-workers']
+  },
+  {
+    id: 'auth',
+    name: 'Auth',
+    accent: 'blue',
+    description:
+      'Better Auth with Drizzle and a Neon Postgres database, signing in with Google.',
+    pieces: ['better-auth', 'drizzle', 'neon']
   }
 ];

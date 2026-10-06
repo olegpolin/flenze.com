@@ -15,4 +15,4 @@
    placeholder values for the env vars; real values live on the Workers.
 6. Update AGENTS.md for what you just added, in an existing section or
    a new one, and add it to the Tech Stack section of README.md.
-7. Only when every step above is finished and committed, prompt the user to get all the required env vars and set up neon project and google oauth credentials and then run npm run db:migrate, and to add any repository secrets the workflows now need
+7. Last of all, when every other step in this prompt is finished and committed, prompt the user to get all the required env vars and set up neon project and google oauth credentials and then run npm run db:migrate, and to add any repository secrets the workflows now need

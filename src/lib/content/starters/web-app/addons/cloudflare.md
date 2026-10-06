@@ -94,7 +94,8 @@
    placeholder values for the env vars; real values live on the Workers.
 5. Update AGENTS.md for what you just added, in an existing section or
    a new one, and add it to the Tech Stack section of README.md.
-6. Only when every step above is finished and committed, prompt the
-   user to add two repository secrets on GitHub: CLOUDFLARE_ACCOUNT_ID,
-   and CLOUDFLARE_API_TOKEN from an Account API token made with the
-   "Edit Cloudflare Workers" template, plus any the database steps need.
+6. Last of all, when every other step in this prompt is finished and
+   committed, prompt the user to add two repository secrets on GitHub:
+   CLOUDFLARE_ACCOUNT_ID, and CLOUDFLARE_API_TOKEN from an Account API
+   token made with the "Edit Cloudflare Workers" template, plus any the
+   database steps need.

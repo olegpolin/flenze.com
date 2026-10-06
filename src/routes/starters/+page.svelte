@@ -8,7 +8,7 @@
 
 <Seo
   title="Starters"
-  description="One prompt per stack: SvelteKit, Tailwind and shadcn-svelte, with add-ons for markdown posts, auth and Cloudflare Workers."
+  description="One prompt per stack: SvelteKit, Tailwind and shadcn-svelte, with add-ons for markdown posts, Cloudflare Workers and auth."
 />
 
 <div class="font-mono text-xs text-muted-foreground uppercase">Starters</div>
