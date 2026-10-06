@@ -17,7 +17,7 @@
      "previews": {}
    }
    ```
-3. Add three GitHub Actions workflows in .github/workflows/.
+3. Add two GitHub Actions workflows in .github/workflows/.
    deploy-production.yml deploys to production on every push to main:
    ```yaml
    name: Deploy
@@ -83,46 +83,15 @@
              command: preview --name pr-${{ github.event.number }}
              gitHubToken: ${{ secrets.GITHUB_TOKEN }}
    ```
-   cleanup-preview.yml deletes that Preview when the pull request closes:
-   ```yaml
-   name: Clean up preview
-
-   on:
-     pull_request:
-       types: [closed]
-
-   permissions:
-     contents: read
-
-   concurrency:
-     group: preview-${{ github.event.number }}
-
-   jobs:
-     cleanup:
-       if: github.event.pull_request.head.repo.full_name == github.repository
-       runs-on: ubuntu-latest
-       steps:
-         - uses: actions/checkout@v7
-         - uses: actions/setup-node@v7
-           with:
-             node-version: lts/*
-             cache: npm
-         - run: npm ci
-         - uses: cloudflare/wrangler-action@v4
-           with:
-             apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-             accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-             command: preview delete --name pr-${{ github.event.number }} --skip-confirmation
-   ```
 4. If the app has a database, update the workflows for the
    database: every pull request preview gets its own Neon branch from
-   Neon's create-branch action, migrations run against it before the
+   Neon's create-branch action; migrations run against it before the
    preview deploys and against production before each production
-   deploy, the preview's DATABASE_URL and ORIGIN are set as its own
-   secrets right after it deploys, the pull request fails if the schema
-   changed without a committed migration, and the cleanup workflow
-   deletes the branch. Builds get placeholder values for the env vars;
-   real values live on the Workers.
+   deploy; the preview's DATABASE_URL and ORIGIN are set as its own
+   secrets right after it deploys; the pull request fails if the schema
+   changed without a committed migration; and a new cleanup-preview.yml
+   deletes the branch when the pull request closes. Builds get
+   placeholder values for the env vars; real values live on the Workers.
 5. Update AGENTS.md for what you just added, in an existing section or
    a new one, and add it to the Tech Stack section of README.md.
 6. Only when every step above is finished and committed, prompt the

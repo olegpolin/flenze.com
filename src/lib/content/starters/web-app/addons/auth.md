@@ -6,13 +6,13 @@
    never db:push.
 5. If GitHub Actions deploy the app, update the workflows for the
    database: every pull request preview gets its own Neon branch from
-   Neon's create-branch action, migrations run against it before the
+   Neon's create-branch action; migrations run against it before the
    preview deploys and against production before each production
-   deploy, the preview's DATABASE_URL and ORIGIN are set as its own
-   secrets right after it deploys, the pull request fails if the schema
-   changed without a committed migration, and the cleanup workflow
-   deletes the branch. Builds get placeholder values for the env vars;
-   real values live on the Workers.
+   deploy; the preview's DATABASE_URL and ORIGIN are set as its own
+   secrets right after it deploys; the pull request fails if the schema
+   changed without a committed migration; and a new cleanup-preview.yml
+   deletes the branch when the pull request closes. Builds get
+   placeholder values for the env vars; real values live on the Workers.
 6. Update AGENTS.md for what you just added, in an existing section or
    a new one, and add it to the Tech Stack section of README.md.
 7. Only when every step above is finished and committed, prompt the user to get all the required env vars and set up neon project and google oauth credentials and then run npm run db:migrate, and to add any repository secrets the workflows now need
