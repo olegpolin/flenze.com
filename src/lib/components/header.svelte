@@ -89,7 +89,7 @@
         </span>
       </Popover.Trigger>
       <Popover.Content
-        class="h-(--bits-popover-content-available-height) w-(--bits-popover-content-available-width) gap-0 overflow-y-auto border-none bg-background p-0 font-mono shadow-none ring-0"
+        class="h-(--bits-popover-content-available-height) w-(--bits-popover-content-available-width) gap-0 overflow-y-auto border-none bg-background p-0 font-mono shadow-none ring-0 data-closed:fill-mode-forwards"
         align="start"
         side="bottom"
         preventScroll
