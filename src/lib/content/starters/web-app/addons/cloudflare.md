@@ -92,6 +92,11 @@
    changed without a committed migration; and a new cleanup-preview.yml
    deletes the branch when the pull request closes. Builds get
    placeholder values for the env vars; real values live on the Workers.
+   If the app has better-auth, sign-in works on previews through its
+   OAuth Proxy plugin: productionURL is the production origin,
+   OAUTH_PROXY_SECRET is a new env var every environment shares, and the
+   previews' URL pattern is a trusted origin. Only the production
+   callback URL is registered with Google.
 5. Update AGENTS.md for what you just added, in an existing section or
    a new one, and add it to the Tech Stack section of README.md.
 6. Last of all, when every other step in this prompt is finished and
