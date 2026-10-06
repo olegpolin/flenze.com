@@ -24,7 +24,7 @@
     <h2 class="text-[22px] font-semibold tracking-[-0.02em]">{name}</h2>
     <p class="text-[15px] leading-normal text-body">
       {blurb} From
-      <a class="text-link hover:underline" href={site} target="_blank" rel="noopener noreferrer">{registry}</a>.
+      <a class="text-link underline" href={site} target="_blank" rel="noopener noreferrer">{registry}</a>.
     </p>
   </div>
   <div class="border-t">

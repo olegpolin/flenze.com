@@ -61,7 +61,7 @@
     wrong.
   </p>
   <span class="font-mono text-xs text-muted-foreground">
-    Source: <a class="text-link hover:underline" href={compare.source.url}>{compare.source.name}</a>,
+    Source: <a class="text-link underline" href={compare.source.url}>{compare.source.name}</a>,
     Svelte 5 vs React, “Event click”. Forty more examples there.
   </span>
 </section>
