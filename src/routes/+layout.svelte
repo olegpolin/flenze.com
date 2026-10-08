@@ -21,7 +21,7 @@
   <Header />
 
   <div class="mx-auto flex w-full max-w-site flex-1 flex-col px-4 pt-6 pb-10 md:px-16">
-    <main class="flex flex-1 flex-col">
+    <main class="flex-1">
       {@render children()}
     </main>
 
