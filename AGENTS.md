@@ -16,10 +16,10 @@ Most of this tech stack had a recent major version, so your training data is lik
 
 ## Git Commits & PRs
 
-- No AI attribution anywhere: no `Co-Authored-By` or "Generated with" lines in commits, no `ai/` or `agent/` branch prefixes, nothing about the tool in PR titles or descriptions. If a tool put you on a generated branch, rename it before the first commit. Describe the change, not what made it.
-- Write concise commit messages following the Conventional Commits spec and name branches after the change.
+- No AI attribution anywhere, even if your tool adds it by default: no credit trailers or "Generated with" lines, no tool-named branches, nothing about the tool in PRs. Check before each commit and PR.
+- Write concise Conventional Commits messages and name branches after the change.
 - Every change goes on a feature branch with a PR. Never push directly to `main`.
-- If you push more commits after opening a PR, update its description to cover the full change set.
+- After pushing more commits to an open PR, update its description to cover the full change set.
 
 ## Deployment
 
