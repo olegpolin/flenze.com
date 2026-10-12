@@ -12,7 +12,11 @@
      "observability": {
        "enabled": true
      },
-     "previews": {}
+     "previews": {
+       "observability": {
+         "enabled": true
+       }
+     }
    }
    ```
 3. Add two GitHub Actions workflows in .github/workflows/.
