@@ -29,6 +29,11 @@
   let dragging = $state(false);
   /** Id of the pointer pressed on the canvas, so only its lift picks. */
   let pressed: number | null = null;
+  /**
+   * Where a finger pressed: the image point under it and the screen point, so the drag that
+   * follows can move the cursor relative to there.
+   */
+  let anchor: { x: number; y: number; clientX: number; clientY: number } | null = null;
   /** The latest pointer move, waiting for the next frame to be aimed at. */
   let moved: PointerEvent | null = null;
   let frame: number | null = null;
@@ -125,15 +130,36 @@
     cursor = { x, y, rgb: [r, g, b], touch };
   }
 
-  /** Looks at the image pixel under a pointer event. */
+  /** The image point under a pointer event, in image pixels, not yet rounded or clamped. */
+  function under(event: PointerEvent) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: ((event.clientX - rect.left) / rect.width) * size!.width,
+      y: ((event.clientY - rect.top) / rect.height) * size!.height,
+      /** Image pixels per screen point: more than one when the image is shown scaled down. */
+      scale: size!.width / rect.width
+    };
+  }
+
+  /**
+   * Looks where a pointer event points. A mouse aims at the pixel under it. A finger that pressed
+   * aims relative to where it landed, moving one image pixel per point of travel, since under a
+   * finger the pixel it covers changes by the whole display scale with every wobble.
+   */
   function aim(event: PointerEvent) {
     if (!size) return;
-    const rect = canvas.getBoundingClientRect();
-    look(
-      Math.floor(((event.clientX - rect.left) / rect.width) * size.width),
-      Math.floor(((event.clientY - rect.top) / rect.height) * size.height),
-      event.pointerType === 'touch'
-    );
+    const touch = event.pointerType === 'touch';
+    const { x, y, scale } = under(event);
+    if (touch && anchor) {
+      const gain = Math.min(1, scale);
+      look(
+        Math.floor(anchor.x + (event.clientX - anchor.clientX) * gain),
+        Math.floor(anchor.y + (event.clientY - anchor.clientY) * gain),
+        true
+      );
+    } else {
+      look(Math.floor(x), Math.floor(y), touch);
+    }
   }
 
   /**
@@ -170,6 +196,10 @@
   function press(event: PointerEvent) {
     if (!size) return;
     pressed = event.pointerId;
+    if (event.pointerType === 'touch') {
+      const { x, y } = under(event);
+      anchor = { x, y, clientX: event.clientX, clientY: event.clientY };
+    }
     aimNow(event);
     canvas.setPointerCapture(event.pointerId);
   }
@@ -178,6 +208,7 @@
     if (event.pointerId !== pressed) return;
     pressed = null;
     aimNow(event);
+    anchor = null;
     pick();
   }
 
@@ -189,8 +220,18 @@
   }
 
   function cancel(event: PointerEvent) {
-    if (event.pointerId === pressed) pressed = null;
+    if (event.pointerId === pressed) {
+      pressed = null;
+      anchor = null;
+    }
     leave(event);
+  }
+
+  /** A press anywhere but the image takes the mark a finger left behind with it. */
+  function pressOutside(event: PointerEvent) {
+    if (!cursor || event.target === canvas) return;
+    forget();
+    cursor = null;
   }
 
   function pick() {
@@ -228,7 +269,7 @@
   }
 </script>
 
-<svelte:document onpaste={paste} />
+<svelte:document onpaste={paste} onpointerdown={pressOutside} />
 
 <Seo title={meta.name} description={meta.description} />
 
@@ -325,8 +366,8 @@
         </div>
       </div>
       <p class="font-mono text-xs text-muted-foreground">
-        Click a pixel to pick it. On touch, drag to aim and lift to pick. Arrow keys move one pixel, Shift
-        moves ten, Enter picks.
+        Click a pixel to pick it. On touch, drag to aim one pixel at a time and lift to pick. Arrow keys
+        move one pixel, Shift moves ten, Enter picks.
       </p>
     </div>
   </section>
