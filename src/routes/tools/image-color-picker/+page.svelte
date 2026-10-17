@@ -29,6 +29,11 @@
   let dragging = $state(false);
   /** Id of the pointer pressed on the canvas, so only its lift picks. */
   let pressed: number | null = null;
+  /** The latest pointer move, waiting for the next frame to be aimed at. */
+  let moved: PointerEvent | null = null;
+  let frame: number | null = null;
+  /** Holds the loupe's patch of pixels between reading and scaling them up. */
+  let patch: OffscreenCanvas | undefined;
 
   const formats = $derived(
     picked
@@ -97,22 +102,31 @@
     load(firstImage(event.dataTransfer?.files));
   }
 
-  /** Moves the cursor to an image pixel and redraws the loupe around it. */
+  /**
+   * Moves the cursor to an image pixel and redraws the loupe around it. The pixels under the loupe
+   * are read once and staged on a canvas the size of the loupe's patch, then scaled up from there:
+   * drawing straight from the image canvas made Safari copy the whole image for every move.
+   */
   function look(x: number, y: number, touch = false) {
     // Not finite when the canvas has no size on the page, as in a hidden tab.
     if (!size || !Number.isFinite(x + y)) return;
     x = Math.min(size.width - 1, Math.max(0, x));
     y = Math.min(size.height - 1, Math.max(0, y));
-    const [r, g, b] = context().getImageData(x, y, 1, 1).data;
     const half = (LOUPE_PIXELS - 1) / 2;
+    const pixels = context().getImageData(x - half, y - half, LOUPE_PIXELS, LOUPE_PIXELS);
+    const centre = (half * LOUPE_PIXELS + half) * 4;
+    const [r, g, b] = pixels.data.subarray(centre, centre + 3);
+    patch ??= new OffscreenCanvas(LOUPE_PIXELS, LOUPE_PIXELS);
+    patch.getContext('2d')!.putImageData(pixels, 0, 0);
     const lens = loupe.getContext('2d')!;
     lens.imageSmoothingEnabled = false;
     lens.clearRect(0, 0, LOUPE_SIZE, LOUPE_SIZE);
-    lens.drawImage(canvas, x - half, y - half, LOUPE_PIXELS, LOUPE_PIXELS, 0, 0, LOUPE_SIZE, LOUPE_SIZE);
+    lens.drawImage(patch, 0, 0, LOUPE_SIZE, LOUPE_SIZE);
     cursor = { x, y, rgb: [r, g, b], touch };
   }
 
-  function point(event: PointerEvent) {
+  /** Looks at the image pixel under a pointer event. */
+  function aim(event: PointerEvent) {
     if (!size) return;
     const rect = canvas.getBoundingClientRect();
     look(
@@ -123,6 +137,32 @@
   }
 
   /**
+   * A moving pointer only aims once per frame, at its latest position: touch screens report
+   * moves faster than the loupe can be redrawn, and the backlog is what made dragging stutter.
+   */
+  function point(event: PointerEvent) {
+    moved = event;
+    frame ??= requestAnimationFrame(() => {
+      frame = null;
+      if (moved) aim(moved);
+      moved = null;
+    });
+  }
+
+  /** Forgets a move still waiting for its frame. */
+  function forget() {
+    if (frame !== null) cancelAnimationFrame(frame);
+    frame = null;
+    moved = null;
+  }
+
+  /** Aims at an event right away, ahead of any move still waiting for its frame. */
+  function aimNow(event: PointerEvent) {
+    forget();
+    aim(event);
+  }
+
+  /**
    * Picking happens on the lift of the pointer that pressed, not on click: a tap fires
    * pointerleave before click, which would have cleared the cursor first. Capturing the pointer
    * keeps a drag aiming past the canvas edge and brings the lift back here.
@@ -130,20 +170,22 @@
   function press(event: PointerEvent) {
     if (!size) return;
     pressed = event.pointerId;
-    point(event);
+    aimNow(event);
     canvas.setPointerCapture(event.pointerId);
   }
 
   function release(event: PointerEvent) {
     if (event.pointerId !== pressed) return;
     pressed = null;
-    point(event);
+    aimNow(event);
     pick();
   }
 
   /** A mouse leaving takes the mark with it; a lifted finger leaves it on the picked pixel. */
   function leave(event: PointerEvent) {
-    if (event.pointerType === 'mouse') cursor = null;
+    if (event.pointerType !== 'mouse') return;
+    forget();
+    cursor = null;
   }
 
   function cancel(event: PointerEvent) {
@@ -244,10 +286,12 @@
     {/if}
 
     <div class={['flex flex-col gap-3 p-4', dragging ? 'bg-muted' : 'bg-panel', !size && 'hidden']}>
-      <div class="relative w-fit max-w-full">
+      <!-- select-none and no touch callout: a finger held on the canvas would otherwise start
+           iOS text selection of the image, which also cancels the drag. -->
+      <div class="relative w-fit max-w-full select-none [-webkit-touch-callout:none]">
         <canvas
           bind:this={canvas}
-          class="block max-h-[75vh] max-w-full cursor-crosshair touch-none outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          class="block max-h-[75vh] max-w-full cursor-crosshair touch-none outline-none select-none [-webkit-touch-callout:none] focus-visible:ring-3 focus-visible:ring-ring/50"
           tabindex="0"
           aria-label="Loaded image. Arrow keys move the cursor, Enter picks the color under it."
           onpointerdown={press}
