@@ -3,20 +3,11 @@
    ```jsonc
    {
      "name": "<name>",
-     "main": ".svelte-kit/cloudflare/_worker.js",
-     "compatibility_date": "2026-10-01",
-     "assets": {
-       "binding": "ASSETS",
-       "directory": ".svelte-kit/cloudflare"
-     },
+     "compatibility_date": "2026-11-19",
      "observability": {
        "enabled": true
      },
-     "previews": {
-       "observability": {
-         "enabled": true
-       }
-     }
+     "previews": {}
    }
    ```
 3. Add two GitHub Actions workflows in .github/workflows/.
